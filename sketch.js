@@ -9,6 +9,14 @@ let elapsedTime = 0;
 let wave;
 
 let polySynth;
+let cnv;
+var vw, wh;
+let spectrum;
+let level = 0;
+let pLevel = level;
+let circlesX = [];
+let circlesY = [];
+
 
 //'sound/Clank2.wav sound/Clank3.wav sound/Fragment.wav sound/Clank1.wav sound/Bappp.wav sound/Clank4.wav sound/TechnoNoise2.wav sound/Scanner.wav sound/FuzzHit.wav sound/TechnoNoise.wav sound/Urchin2.wav
 
@@ -21,22 +29,41 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(400, 400);
     button = select('button');
     button.mousePressed(play);
     frameRate(1);
     polySynth = new p5.PolySynth();
+
+    // wv = windowWidth;
+    // vh = windowHeight;
+    // cnv = createCanvas(500, 500);
+    // var x = (windowWidth - width) / 2;
+    // var y = (windowHeight - height) / 2;
+    // background('#222222');
+
+
+    // cnv.position(x, y);
+
+
+    // loaded = false;
+
+    fft = new p5.FFT();
+    amplitude = new p5.Amplitude();
+    peakDetect = new p5.PeakDetect();
+    colorMode(HSB, 360);
+
 }
 
 function play() {
     userStartAudio();
+
     if (!isPlaying) {
         isPlaying = true;
-        button.html('stop');
-        playSynth();
+        button.html('Pause');
+        // playSynth();
     } else {
         isPlaying = false;
-        button.html('start');
+        button.html('Play');
         elapsedTime = 0;
         getAudioContext().suspend();
 
@@ -58,7 +85,14 @@ function play() {
 
 
 function draw() {
-    background(220);
+    pLevel = level;
+
+    spectrum = fft.analyze();
+    level = amplitude.getLevel();
+
+
+
+    console.log(level)
     if (isPlaying) {
         wave.play();
         console.log(elapsedTime)
@@ -95,21 +129,21 @@ function draw() {
     }
 }
 
-function playSynth() {
-    console.log('hi' + elapsedTime)
-    // note duration (in seconds)
-    let dur = 2;
+// function playSynth() {
+//     console.log('hi' + elapsedTime)
+//     // note duration (in seconds)
+//     let dur = 2;
 
-    // // time from now (in seconds)
-    let time = 0;
+//     // // time from now (in seconds)
+//     let time = 0;
 
-    // // velocity (volume, from 0 to 1)
-    let vel = 1;
+//     // // velocity (volume, from 0 to 1)
+//     let vel = 1;
 
-    // // notes can overlap with each other
-    polySynth.play('G2', vel, 1, dur);
-    polySynth.play('C3', vel, 4, dur);
+//     // // notes can overlap with each other
+//     polySynth.play('G2', vel, 1, dur);
+//     polySynth.play('C3', vel, 4, dur);
 
-    // polySynth.play('C3', vel, time += 1 / 3, dur);
-    // polySynth.play('G3', vel, time += 1 / 3, dur);
-}
+//     // polySynth.play('C3', vel, time += 1 / 3, dur);
+//     // polySynth.play('G3', vel, time += 1 / 3, dur);
+// }
